@@ -1,6 +1,6 @@
 {
-  "name": "Event-register",
-  "description": "Event Registration Website",
+  "name": "Event",
+  "description": "Event registration website",
   "repository": "https://github.com/borusara/Register",
   "env": {
     "BOT_TOKEN": {
@@ -9,6 +9,14 @@
     },
     "DATABASE_URL": {
       "description": "Your PostgreSQL database URL",
+      "required": true
+    },
+    "API_ID": {
+      "description": "Your Telegram API ID",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Your Telegram API Hash",
       "required": true
     }
   },
