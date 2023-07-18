@@ -1,38 +1,40 @@
+from pyrogram import Client, filters
+from flask import Flask, render_template, request
+import psycopg2
 import os
-from flask import Flask, request
-from pyrogram import Client
 
 app = Flask(__name__)
 
-# Get the bot token from environment variable
+# Retrieve environment variables
 bot_token = os.environ.get('BOT_TOKEN')
-
-# Get the PostgreSQL database URL from environment variable
 database_url = os.environ.get('DATABASE_URL')
+api_id = os.environ.get('API_ID')
+api_hash = os.environ.get('API_HASH')
 
-# Initialize the Pyrogram client
-with Client('my_account', api_id=12345, api_hash='your-api-hash', bot_token=bot_token) as app_client:
-    @app.route('/registered', methods=['POST'])
-    def handle_registered():
-        # Get the Telegram name and username from the request
+# Connect to PostgreSQL database
+conn = psycopg2.connect(database_url)
+cur = conn.cursor()
+
+# Create a Pyrogram client
+client = Client("my_account", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
+
+# Define route for the index page
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
         telegram_name = request.form['telegram_name']
         telegram_username = request.form['telegram_username']
 
-        # Save the Telegram name and username to the database (using the database_url variable)
+        # Insert the data into the database
+        cur.execute("INSERT INTO registrations (telegram_name, telegram_username) VALUES (%s, %s)",
+                    (telegram_name, telegram_username))
+        conn.commit()
 
-        # Construct the message
-        message_body = f"Event Registration\nTelegram Name: {telegram_name}\nTelegram Username: {telegram_username}"
+        # Show success message
+        success_message = 'Thank you for registering.'
+        return render_template('index.html', success_message=success_message)
 
-        try:
-            # Send the message via Twilio
-
-            # Return success response
-            return 'Registration successful'
-        except Exception as e:
-            # Return error response
-            return str(e), 500
-
+    return render_template('index.html')
 
 if __name__ == '__main__':
-    # Run the Flask app
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    app.run()
