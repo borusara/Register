@@ -1,0 +1,20 @@
+{
+  "name": "Event-register",
+  "description": "Event Registration Website",
+  "repository": "https://github.com/borusara/Register",
+  "env": {
+    "BOT_TOKEN": {
+      "description": "Your Telegram bot token",
+      "required": true
+    },
+    "DATABASE_URL": {
+      "description": "Your PostgreSQL database URL",
+      "required": true
+    }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
+}
